@@ -5,7 +5,7 @@ var player;
 score = 0;
 var labelScore;
 var pipes = [];
-var splashDisplay;
+var pipeTimer;
 
 /*var count = 0;*/
 
@@ -20,23 +20,6 @@ var game = new Phaser.Game(790, 400, Phaser.AUTO, 'game', stateActions);
 /*
  * Loads all resources for the game and gives them names.
  */
-
-jQuery("#greeting-form").on("submit", function(event_details) {
-    var greeting = "Hello ";
-    var name = jQuery("#fullName").val();
-    var greeting_message = greeting + name;
-    jQuery("#greeting-form").hide();
-    jQuery("#greeting").append("<p>" + greeting_message + "</p>");
-    //var timeInterval = ;
-        $("#greeting").fadeOut(2500);
-
-
-
-
-  //  event_details.preventDefault();
-});
-
-
 function preload() {
     game.load.image("playerImg", "../assets/ironman-flying.png");
     game.load.image("backgroundImg", "../assets/ironman-face.jpg");
@@ -57,9 +40,8 @@ function preload() {
 function create() {
     // set the background colour of the scene
     game.stage.setBackgroundColor("#000000");
-    splashDisplay = game.add.text(100,200, "Press SPACEBAR to start");
 
-
+    game.sound.play("acdc");
 
     game.input
         .keyboard.addKey(Phaser.Keyboard.SPACEBAR)
@@ -72,15 +54,22 @@ function create() {
     game.add.sprite(30, 145, "titlewriting");
 
 
+    game.input
+        .onDown
+        .add(clickHandler);
 
 }
 
 function start() {
+
+
+
     var background = game.add.image(0, 0, "stark-tower");
     background.width = 791;
     background.height = 401;
     game.sound.play("booster");
-    splashDisplay.destroy();
+
+
 
 
     game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.removeAll();
@@ -102,16 +91,12 @@ function start() {
         .keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         .onDown.add(playerJump);
 
-   /* game.input
-        .onDown
-        .add(clickHandler);*/
 
 
     player = game.add.sprite(100, 200, "playerImg");
     game.physics.arcade.enable(player);
     player.body.velocity.x = 0;
-    player.body.gravity.y = 700;
-    player.anchor.setTo(0.5, 0.5);
+    player.body.gravity.y = 600;
 
     game.input.keyboard
         .addKey(Phaser.Keyboard.SPACEBAR)
@@ -146,81 +131,84 @@ function addPipeBlock(x, y) {
     var pipeBlock = game.add.sprite(x,y,"pipe");
     pipes.push(pipeBlock);
     game.physics.arcade.enable(pipeBlock);
-    pipeBlock.body.velocity.x = -400;
+    pipeBlock.body.velocity.x = -260;
 
 
 }
 
-/*function clickHandler(event) {
+function clickHandler(event) {
+    /* count ++;
+     if (Math)*/
     var background = game.add.image(0, 0, "pausescreen");
     background.width = 791;
     background.height = 401;
 
-}*/
+    pause();
+
+}
+
+
+function pause() {
+
+    for(var i = 0; i < pipes.length; i++){
+        pipes[i].body.velocity.x = 0;
+
+    }
+    player.body.velocity.y = 0;
+    player.body.gravity.y = 0;
+
+
+
+
+}
+
+function resume() {
+    //TODO
+}
 
 function changeScore() {
     score = score + 1;
     labelScore.setText(score.toString());
 
 }
+function moveLeft() {
+    player.x++
+}
+
+function moveRight() {
+    player.x--
+
+}
+
+function moveUp() {
+    player.y--
+
+}
+
+function moveDown() {
+    player.y++
+
+}
+
 
 
 function playerJump(){
-    player.body.velocity.y = -300;
+    player.body.velocity.y = -250;
 
 }
+
+
 /*
  * This function updates the scene. It is called for every new frame.
  */
 function update() {
-
-
-
-
-    if (player == undefined) {
-        return;
-    }
-
-
-    game.physics.arcade.overlap(player,
+    //for(var index=0; index<pipes.length; index++){
+        game.physics.arcade.overlap(player,
         pipes,
         gameOver);
     //}
-
-    if (player.y < -200 || player.y > 400) {
-        gameOver();
-    }
-
-    player.rotation = Math.atan(player.body.velocity.y / 1000);
-
 }
-
-
 
 function gameOver() {
-
-    $("#greeting").show();
-    $("#score").val(score.toString());
-
-    //game.state.restart();
-
-    //gameOver();
-    game.destroy();
-
-    //location.reload();
-
-
+    location.reload();
 }
-
-$.get("/score", function(scores){
-    scores.sort(function (scoreA, scoreB){
-        var difference = scoreB.score - scoreA.score;
-        return difference;
-    });
-    for (var i = 0; i < 3; i++) {
-        $("#scoreBoard").append(
-            "<li>" +
-            scores[i].name + ": " + scores[i].score +
-            "</li>");
-    }
-});

@@ -5,9 +5,16 @@ var player;
 score = 0;
 var labelScore;
 var pipes = [];
+var robots = [];
 var splashDisplay;
+var gapSize = 100;
+var gapMargin = 200;
+var blockHeight = 50;
+var backgroungVelocity = 50
+var height = 400;
+var width = 790;
 
-/*var count = 0;*/
+var pipeInterval;
 
 // Phaser parameters:
 // - game width
@@ -15,7 +22,7 @@ var splashDisplay;
 // - renderer (go for Phaser.AUTO)
 // - element where the game will be drawn ('game')
 // - actions on the game state (or null for nothing)
-var game = new Phaser.Game(790, 400, Phaser.AUTO, 'game', stateActions);
+var game = new Phaser.Game(width, height, Phaser.AUTO, 'game', stateActions);
 
 /*
  * Loads all resources for the game and gives them names.
@@ -46,6 +53,8 @@ function preload() {
     game.load.image("stark-tower", "../assets/Stark-Tower.jpg");
     game.load.image("pipe","../assets/block.png");
     game.load.audio("acdc", "../assets/acdc.mp3");
+    game.load.image("robot", "../assets/robot.png");
+    game.load.image("skyscraper", "../assets/skyscraper.jpg")
 }
 
 /*
@@ -66,16 +75,34 @@ function create() {
         .onDown.add(start);
 
 
-    var background = game.add.image(0, 0, "backgroundImg");
+   /* var background = game.add.image(0, 0, "backgroundImg");
     background.width = 791;
     background.height = 401;
-    game.add.sprite(30, 145, "titlewriting");
+    game.add.sprite(30, 145, "titlewriting");*/
 
 
 
-}
+
+
+    var backgroungVelocity = gameSpeed / 10;
+    var background1 = game.add.sprite(0, 0, "skyscraper");
+    game.physics.arcade.enable(background1);
+    background1.body.velocity.x = -50;
+
+    var background2 = game.add.sprite(790,0, "skyscraper");
+    game.physics.arcade.enable(background2);
+    background2.body.velocity.x = -50;
+
+    game.time.events.loop((790 / -50) * Phaser.Timer.SECOND, function(){
+        var background = game.add.sprite(backgroundWidth, 0, "backgroundImg");
+        game.physics.arcade.enable(background);
+        background.body.velocity.x = -50;
+    });
+
 
 function start() {
+
+    //game.paused = False
     var background = game.add.image(0, 0, "stark-tower");
     background.width = 791;
     background.height = 401;
@@ -102,9 +129,9 @@ function start() {
         .keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         .onDown.add(playerJump);
 
-   /* game.input
-        .onDown
-        .add(clickHandler);*/
+    game.input
+        .keyboard.addKey(Phaser.Keyboard.P)
+        .onDown.add(pauseON);
 
 
     player = game.add.sprite(100, 200, "playerImg");
@@ -125,21 +152,42 @@ function start() {
     pipeInterval = 1.50;
     game.time.events
         .loop(pipeInterval * Phaser.Timer.SECOND,
-    generatePipe);
+        generate);
 
+}
+
+function generate() {
+    var diceRoll = game.rnd.integerInRange(1, 3);
+    if(diceRoll==1) {
+        generateRobots();
+    } else {
+        generatePipe();
+    }
 }
 
 function spaceHandler() {
     game.sound.play("booster");
 }
 function generatePipe() {
-    var gap = game.rnd.integerInRange(1 ,5);
-    for (var count = 0; count < 8; count++) {
-        if (count != gap && count != gap+1) {
-            addPipeBlock(750, count * 50);
-        }
+    var gapStart = game.rnd.integerInRange(gapMargin, height - gapSize - gapMargin);
+    console.log(gapStart);
+
+    for(var y=gapStart; y > 0 ; y -= blockHeight){
+        addPipeBlock(width,y - blockHeight);
+    }
+    for(var y = gapStart + gapSize; y < height; y += blockHeight) {
+        addPipeBlock(width, y);
     }
     changeScore();
+}
+
+function generateRobots(){
+    var y = game.rnd.integerInRange(50,300);
+    var bonus = game.add.sprite(width, y, "robot");
+    robots.push(bonus);
+    game.physics.arcade.enable(bonus);
+    bonus.body.velocity.x = -400;
+    bonus.body.velocity.y = 0
 }
 
 function addPipeBlock(x, y) {
@@ -151,12 +199,11 @@ function addPipeBlock(x, y) {
 
 }
 
-/*function clickHandler(event) {
-    var background = game.add.image(0, 0, "pausescreen");
-    background.width = 791;
-    background.height = 401;
+function pauseON(event) {
+    game.paused = !game.paused;
+    $("#pausemessage").toggle();
 
-}*/
+}
 
 function changeScore() {
     score = score + 1;
@@ -187,11 +234,12 @@ function update() {
         gameOver);
     //}
 
-    if (player.y < -200 || player.y > 400) {
+    if (player.y < 000 || player.y > 400) {
         gameOver();
     }
 
     player.rotation = Math.atan(player.body.velocity.y / 1000);
+
 
 }
 

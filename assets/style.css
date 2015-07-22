@@ -1,0 +1,96 @@
+h1 {
+    color: #800000;
+    font: Helvetica;
+    font-size: xx-large;
+}
+
+.score {
+    color: gray;
+}
+
+.gold {
+    color: gold;
+
+}
+
+#gameLink {
+    text-align: center;
+    border: 1px solid gray;
+}
+
+
+
+#game {
+    position:absolute;
+left: 30%;
+top: 25%;
+
+}
+
+.col-xs-4 {
+
+    left: 5%;
+    top: 15%;
+    color: #CC9900;
+    font: Helvetica;
+    font-size: xx-large;
+    border: 2px #800000;
+    border-radius: 5px;
+
+    width: 600px;
+    height: 200px;
+
+;
+}
+
+
+.container {
+
+    left: 10%;
+    top: 80%;
+}
+
+#greeting {
+    display: none;
+position: absolute;
+left: 44%;
+top: 35%;
+background: #C0C0C0;
+width: 260px;
+height: 200px;
+border: 2px #000000;
+border-radius: 5px;
+padding: 20px;
+}
+
+body {
+    background-image: url("bluprint.gif");
+}
+
+#pausemessage {
+    display: none;
+    position: absolute;
+    left: 39%;
+    top: 37%;
+    width: 260px;
+    height: 200px;
+    color: #FFFFFF;
+    font-size: 100px;
+    font: Helvetica;
+
+
+}
+
+
+#die {
+    display: none;
+    position: absolute;
+    left: 44%;
+    top: 35%;
+    background: #C0C0C0;
+    width: 260px;
+    height: 200px;
+    border: 2px #000000;
+    border-radius: 5px;
+    padding: 20px;
+}
