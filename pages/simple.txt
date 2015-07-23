@@ -1,0 +1,12 @@
+Bob's Flappy Bird.
+
+Welcome to the best flappy bird game there is!
+
+Here will be the game
+
+The highest scorers are:
+<ul>
+    <li>Me</li>
+    <li>Myself</li>
+    <li>I</li>
+</ul>
