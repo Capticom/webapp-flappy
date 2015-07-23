@@ -86,7 +86,7 @@ function create() {
 
 function start() {
 
-
+    score = 0
     $("#die").hide();
     game.sound.play("booster");
     splashDisplay.destroy();
@@ -134,7 +134,6 @@ function balls() {
     game.physics.arcade.enable(oneBullet);
     oneBullet.body.velocity.x = 300;
     oneBullet.body.velocity.y = 0;
-    console.log("fire one bullet");
 }
 
 function addBackground() {
@@ -251,7 +250,7 @@ function update() {
         for (var j = 0; j < bullets.length; j++) {
             game.physics.arcade.overlap(pipes[i], bullets[j],function () {
                 bullets[j].kill();
-                score = score + 1
+                changeScore ()
 
             });
         }
@@ -261,7 +260,8 @@ function update() {
             game.physics.arcade.overlap(bullets[i], robots[j],function () {
                 bullets[j].kill();
                 robots[j].kill();
-                score = score + 1
+                console.log("Robot down")
+                changeScore()
             });
         }
     }
