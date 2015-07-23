@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <title>
-
-    Iron man Flappy
+    Flappy Downy Jr.
 </title>
 
 
@@ -14,8 +13,7 @@
 
 <body>
 
-<audio autoplay>
-
+<audio autoplay id= "audio1" onloadeddata="setHalfVolume()">
     <source src="../assets/acdc.mp3" type="audio/mpeg">
 
 </audio>
@@ -24,7 +22,7 @@
 <div class="container">
     <div class="jumbotron">
         <h1>FLAPPY DOWNEY Jr.</h1>
-        <p>The best Iron Man themed, Flappy Bird rip-off there is!</p>
+        <p id="description">The best Iron Man themed, Flappy Bird rip-off there is!</p>
     </div>
 
 </div>
@@ -43,30 +41,34 @@
 <div id="greeting">
     <form id="greeting-form" method="post" action="/score">
         <div class="form-group">
-        <h>You died</h>
-            <label for="firstname">What's your First Name?</label>
+            <label for="firstname" class="submitWriting">What's your First Name?</label>
             <input type="text" id="firstname" class="form-control"
                    name="firstname" placeholder="Insert your name">
 
-            <label for="surname">What's your Surname?</label>
+            <label for="surname" class ="submitWriting">What's your Surname?</label>
             <input type="surname" id="surname" class="form-control"
                    name="surname" placeholder="Insert your Surname">
 
             <input type="hidden" id="score" name="score" value="0">
 
         </div>
-        <button class="btn btn-default" type="submit">OK</button>
+        <button class="myButton1" type="submit">OK</button>
 
     </form>
 </div>
 
 <div id="die">
 
+    <form id="deathForm" >
+
             <h1>You died!</h1>
 
-            <h1> Press Space to try again</h1>
+            <h1>Press Space to try again</h1>
 
+    <button class="myButton " type="submit" >Submit Score</button>
+    </form>
 </div>
+
 
 
 
@@ -90,6 +92,8 @@
     </div>
 
     </div>
+
+
 
 
 <script src="../lib/jquery.js"></script>

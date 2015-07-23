@@ -7,10 +7,11 @@ var labelScore;
 var pipes = [];
 var robots = [];
 var splashDisplay;
-var gapSize = 125;
-var gapMargin = 200;
+var gapSize = 100;
+var gapMargin = 20;
 var blockHeight = 50;
 var bullets = [];
+var scorebars = [];
 var backgroundWidth = 790;
 var gameSpeed = 10;
 
@@ -21,30 +22,32 @@ var width = 790;
 
 var pipeInterval;
 
-// Phaser parameters:
-// - game width
-// - game height
-// - renderer (go for Phaser.AUTO)
-// - element where the game will be drawn ('game')
-// - actions on the game state (or null for nothing)
 var game = new Phaser.Game(width, height, Phaser.AUTO, 'game', stateActions);
 
-/*
- * Loads all resources for the game and gives them names.
- */
 
 jQuery("#greeting-form").on("submit", function (event_details) {
-    var greeting = "Hello ";
+   // var greeting = "Hello ";
     var name = jQuery("#fullName").val();
     var greeting_message = greeting + name;
     jQuery("#greeting-form").hide();
     jQuery("#greeting").append("<p>" + greeting_message + "</p>");
-    //var timeInterval = ;
     $("#greeting").fadeOut(2500);
 
-
-    //  event_details.preventDefault();
 });
+
+
+
+
+
+$("#die").on("submit", function (event){
+    console.log("Die submitted");
+    jQuery("#die").hide();
+    jQuery("#greeting").show();
+    event.preventDefault();
+
+});
+
+
 
 
 function preload() {
@@ -55,15 +58,16 @@ function preload() {
     game.load.image("pausescreen", "../assets/iron-man-hands.jpg");
     game.load.image("stark-tower", "../assets/Stark-Tower.jpg");
     game.load.image("pipe", "../assets/block.png");
+    game.load.image("pipeInvisible", "../assets/blockTransparent.png");
     game.load.audio("acdc", "../assets/acdc.mp3");
     game.load.image("robot", "../assets/robot.png");
     game.load.image("skyscrapers", "../assets/skyscrapers.png");
     game.load.image("balls", "../assets/balls.png");
-}
+    //game.load.atlas('seacreatures', 'assets/sprites/seacreatures_json.png', 'assets/sprites/seacreatures_json.json');
+    //game.load.image('undersea', 'assets/pics/undersea.jpg');
+   // game.load.spriteSheet("ironMan", "");
 
-/*
- * Initialises the game. This function is only called once.
- */
+}
 
 
 function create() {
@@ -73,6 +77,13 @@ function create() {
         .keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         .onDown.add(start);
 
+    game.add.image(0, 0, 'undersea');
+
+    greenJellyfish = game.add.sprite(330, 100, 'seacreatures', 'greenJellyfish0000');
+
+    game.input.onDown.add(changeFrame, this);
+
+
 
     var background = game.add.image(0, 0, "backgroundImg");
     background.width = 791;
@@ -80,11 +91,21 @@ function create() {
     game.add.sprite(30, 145, "titlewriting");
 
     splashDisplay = game.add.text(33, 250, "Press SPACEBAR to start", {fill: "#CC9900"});
-    splashDisplay = game.add.text(33, 300, "Press P to pause", {fill: "#CC9900"});
+    splashDisplay = game.add.text(33, 300, "Press Enter to shoot", {fill: "#CC9900"});
+    splashDisplay = game.add.text(33, 350, "Press P to pause", {fill: "#CC9900"});
+
+    splashDisplay = game.add.text(33, 50, "1 point per building", {fill: "#B20000"});
+    splashDisplay = game.add.text(33, 100, "2 points for destroying a robot", {fill: "#B20000"});
+
+
+
 
 }
 
 function start() {
+
+
+    console.log("start was called");
 
     score = 0
     $("#die").hide();
@@ -104,7 +125,8 @@ function start() {
 
     game.input
         .keyboard.addKey(Phaser.Keyboard.ENTER)
-        .onDown.add(balls);
+        .onDown.add(balls)
+
 
     game.input
         .keyboard.addKey(Phaser.Keyboard.P)
@@ -113,15 +135,16 @@ function start() {
     player = game.add.sprite(100, 200, "playerImg");
     game.physics.arcade.enable(player);
     player.body.velocity.x = 0;
-    player.body.gravity.y = 700;
+    player.body.gravity.y = 800;
     player.anchor.setTo(0.5, 0.5);
+
 
     game.input.keyboard
         .addKey(Phaser.Keyboard.SPACEBAR)
         .onDown.add(playerJump);
 
     //generatePipe();
-    pipeInterval = 1.50;
+    pipeInterval = 1.00;
     if(game.paused == false) {game.time.events
         .loop(pipeInterval * Phaser.Timer.SECOND,
         generate);}
@@ -148,7 +171,7 @@ function addBackground() {
     game.physics.arcade.enable(background1);
     game.physics.arcade.enable(background2);
 
-    background1.body.velocity.x = -20;
+    background1.body.velocity.x = -40;
     background2.body.velocity.x = background1.body.velocity.x;
 }
 
@@ -173,10 +196,17 @@ function generatePipe() {
     for (var y = gapStart; y > 0; y -= blockHeight) {
         addPipeBlock(width, y - blockHeight);
     }
+
+    var scorebar = game.add.sprite(width + 25, 0, "pipeInvisible");
+    scorebar.width = 20;
+    scorebar.height = height;
+    game.physics.arcade.enable(scorebar);
+    scorebar.body.velocity.x = -400;
+    scorebars.push(scorebar);
+
     for (var y = gapStart + gapSize; y < height; y += blockHeight) {
         addPipeBlock(width, y);
     }
-    changeScore();
 }
 
 function generateRobots() {
@@ -197,6 +227,12 @@ function addPipeBlock(x, y) {
 
 }
 
+function setHalfVolume() {
+    var myAudio = document.getElementById("audio1");
+    myAudio.volume = 0.4; //Changed this to 0.5 or 50% volume since the function is called Set Half Volume ;)
+}
+
+
 function pauseON(event) {
     game.paused = !game.paused;
     $("#pausemessage").toggle();
@@ -209,15 +245,12 @@ function changeScore() {
 
 }
 
-
 function playerJump() {
-    player.body.velocity.y = -300;
+    player.body.velocity.y = -315;
     game.sound.play("booster");
 
 }
-/*
- * This function updates the scene. It is called for every new frame.
- */
+
 function update() {
 
 
@@ -245,12 +278,16 @@ function update() {
     game.physics.arcade.overlap(player, pipes, gameOver);
     game.physics.arcade.overlap(player,  robots, gameOver);
 
+    game.physics.arcade.overlap(player, scorebars, function(p, s) {
+        s.destroy();
+        changeScore();
+    });
+
 
     for (var i = 0; i < pipes.length; i++) {
         for (var j = 0; j < bullets.length; j++) {
             game.physics.arcade.overlap(pipes[i], bullets[j],function () {
                 bullets[j].kill();
-                changeScore ()
 
             });
         }
@@ -258,10 +295,12 @@ function update() {
     for (var i = 0; i < bullets.length; i++) {
         for (var j = 0; j < robots.length; j++) {
             game.physics.arcade.overlap(bullets[i], robots[j],function () {
-                bullets[j].kill();
+                bullets[i].kill();
                 robots[j].kill();
-                console.log("Robot down")
-                changeScore()
+                console.log("Robot down");
+                changeScore();
+                changeScore();
+
             });
         }
     }
@@ -269,9 +308,14 @@ function update() {
 
 
 
+
+
 }
 
 function restart() {
+
+
+    console.log("restart has been called");
 
     pipes.splice(0,pipes.length);
     robots.splice(0,robots.length);
@@ -315,4 +359,4 @@ $.get("/score", function (scores) {
 
 
 
-})
+});
