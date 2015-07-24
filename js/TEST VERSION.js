@@ -63,9 +63,6 @@ function preload() {
     game.load.image("robot", "../assets/robot.png");
     game.load.image("skyscrapers", "../assets/skyscrapers.png");
     game.load.image("balls", "../assets/balls.png");
-    //game.load.atlas('seacreatures', 'assets/sprites/seacreatures_json.png', 'assets/sprites/seacreatures_json.json');
-    //game.load.image('undersea', 'assets/pics/undersea.jpg');
-   // game.load.spriteSheet("ironMan", "");
 
 }
 
@@ -76,14 +73,6 @@ function create() {
     game.input
         .keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         .onDown.add(start);
-
-    game.add.image(0, 0, 'undersea');
-
-    greenJellyfish = game.add.sprite(330, 100, 'seacreatures', 'greenJellyfish0000');
-
-    game.input.onDown.add(changeFrame, this);
-
-
 
     var background = game.add.image(0, 0, "backgroundImg");
     background.width = 791;
