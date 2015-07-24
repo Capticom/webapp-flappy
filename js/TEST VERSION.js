@@ -48,7 +48,7 @@ $("#die").on("submit", function (event){
 });
 
 
-
+setHalfVolume()
 
 function preload() {
     game.load.image("playerImg", "../assets/ironman-flying.png");
@@ -218,7 +218,7 @@ function addPipeBlock(x, y) {
 
 function setHalfVolume() {
     var myAudio = document.getElementById("audio1");
-    myAudio.volume = 0.4; //Changed this to 0.5 or 50% volume since the function is called Set Half Volume ;)
+    myAudio.volume = 0.4;
 }
 
 

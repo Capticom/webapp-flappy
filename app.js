@@ -33,6 +33,7 @@ app.post('/score', function(request, response){
     var surname = request.body.surname;
     var score = request.body.score;
 
+
     var database = csv.createCsvFileWriter("scores.csv", {"flags": "a"});
     var data = [name, surname, score];
 
